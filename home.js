@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const user = await me();
 
+  const authSection = document.getElementById('auth');
+  if (authSection) {
+    authSection.style.display = user ? 'none' : '';
+  }
+
   products.forEach((p) => {
     const card = document.createElement('div');
     card.className = 'product-card';
