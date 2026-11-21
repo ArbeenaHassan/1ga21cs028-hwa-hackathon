@@ -14,12 +14,13 @@
     <nav class="nav container">
       <div class="logo">PAWPAL</div>
       <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#how-it-works">How It Works</a></li>
-        <li><a href="#puzzles">Puzzles</a></li>
-        <li><a href="#order">Order</a></li>
+        <li><a href="index.html">Shop</a></li>
+        <li><a href="cart.html" class="nav-cart" data-auth>Cart <span id="nav-cart-count">0</span></a></li>
+        <li><a href="account.html" data-auth>Account</a></li>
+        <li><a href="login.html" data-guest>Sign in</a></li>
+        <li><a href="signup.html" data-guest>Create account</a></li>
       </ul>
-      <a href="#order" class="nav-btn">Pre-order</a>
+      <a href="logout" id="logout-btn" class="nav-btn" data-auth style="display:none">Sign out</a>
       <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
     </nav>
   </header>
@@ -30,23 +31,20 @@
       <h1>Entertain your dog while you're away.<br>Feed them on time, even when you're not home.</h1>
       <p class="hero-p">PawPal is the smart dog toy with camera, sensors, pre-recorded voices, multi-level puzzles and an automatic feeder — all controlled from your phone.</p>
       <div class="hero-actions">
-        <a href="#order" class="btn btn-primary">Pre-order PawPal</a>
-        <button class="btn btn-outline" onclick="addToCart()">Add to cart</button>
-        <button class="btn btn-outline" onclick="addToWishlist()">Add to wishlist</button>
-        <a href="#features" class="btn btn-outline">See features</a>
+        <a href="index.html#products" class="btn btn-outline">Browse products</a>
       </div>
     </div>
     <div class="hero-visual">
       <div class="device-card">
-        <div class="device-screen">🐶</div>
-        <div class="device-label">PawPal Toy</div>
+        <div class="device-screen">📹</div>
+        <div class="device-label">Camera & Scanner</div>
       </div>
       <div class="device-card">
-        <div class="device-screen">📱</div>
-        <div class="device-label">Owner App</div>
+        <div class="device-screen">🎙️</div>
+        <div class="device-label">Owner's Voice</div>
       </div>
       <div class="device-card">
-        <div class="device-screen">🍖</div>
+        <div class="device-screen">🍽️</div>
         <div class="device-label">Auto Feeder</div>
       </div>
     </div>
@@ -66,7 +64,6 @@
           <h3>Owner's Voice</h3>
           <p>Record your voice from the app. PawPal plays it to guide your dog to the toy and through each puzzle.</p>
         </div>
-        <div class="feature-icon"></div>
         <div class="feature-card">
           <div class="feature-icon">🧠</div>
           <h3>Multi-Level Puzzles</h3>
@@ -91,88 +88,39 @@
     </div>
   </section>
 
+  <section id="products" class="products section">
+    <div class="container">
+      <h2 class="section-title">Choose your PawPal</h2>
+      <p class="section-sub">Pick the right setup for your dog</p>
+      <div id="product-grid" class="grid grid-3"></div>
+    </div>
+  </section>
+
   <section id="how-it-works" class="how section alt">
     <div class="container">
       <h2 class="section-title">How PawPal works</h2>
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
-          <h3>You leave home</h3>
-          <p>Enable PawPal remotely from the app before you head out.</p>
+          <h3>Sign in</h3>
+          <p>Create an account or sign in to PawPal.</p>
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <h3>Dog is called</h3>
-          <p>If your dog isn't in view, PawPal plays your pre-recorded voice to invite them over.</p>
+          <h3>Add to cart</h3>
+          <p>Select a product and quantity, then add to cart.</p>
         </div>
         <div class="step">
           <div class="step-num">3</div>
-          <h3>Puzzle time</h3>
-          <p>Your dog solves a puzzle matched to their skill level to earn a treat.</p>
+          <h3>Checkout</h3>
+          <p>Enter delivery details and complete payment.</p>
         </div>
         <div class="step">
           <div class="step-num">4</div>
-          <h3>Fed & hydrated</h3>
-          <p>Food and water dispense on schedule — unless your dog is sleeping.</p>
+          <h3>Track order</h3>
+          <p>Watch your order ship and get delivered.</p>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section id="puzzles" class="puzzles section">
-    <div class="container">
-      <h2 class="section-title">Puzzle levels</h2>
-      <p class="section-sub">Adapted to your dog's performance</p>
-      <div class="grid grid-3">
-        <div class="puzzle-card">
-          <h3>Slide & Open</h3>
-          <p>Slide panels to uncover hidden treats. Great for beginners.</p>
-        </div>
-        <div class="puzzle-card">
-          <h3>Lift & Wheel</h3>
-          <p>Lift flaps and spin wheels to release rewards.</p>
-        </div>
-        <div class="puzzle-card">
-          <h3>Catch the Mouse</h3>
-          <p>Bat a moving toy mouse to win a treat.</p>
-        </div>
-        <div class="puzzle-card">
-          <h3>Scent Tracking</h3>
-          <p>Follow the smell trail to find hidden treats.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="order" class="order section">
-    <div class="container">
-      <h2 class="section-title">Pre-order PawPal</h2>
-      <form id="order-form" class="order-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Name</label>
-            <input type="text" name="name" required placeholder="Your name">
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" required placeholder="you@example.com">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Dog's name</label>
-          <input type="text" name="dogName" placeholder="Buddy">
-        </div>
-        <div class="form-group">
-          <label>I'm interested in</label>
-          <select name="interest">
-            <option>Full Toy + Feeder</option>
-            <option>Toy only</option>
-            <option>Feeder only</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary btn-full">Request pre-order</button>
-      </form>
-      <p id="form-msg" class="form-msg"></p>
     </div>
   </section>
 
@@ -180,10 +128,11 @@
     <div class="container footer-inner">
       <div class="logo">PAWPAL</div>
       <p>Smart dog toy & feeder. Keep your dog happy, fed and hydrated while you're away.</p>
-      <div class="footer-note">Demo project — orders are simulated.</div>
+      <div class="footer-note">Demo project — backend API runs on Vercel serverless functions.</div>
     </div>
   </footer>
 
   <script src="script.js"></script>
+  <script src="home.js"></script>
 </body>
 </html>

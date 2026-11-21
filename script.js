@@ -1,6 +1,81 @@
-document.addEventListener('DOMContentLoaded', () => {
+const API = window.location.origin;
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    headers: { 'Content-Type': 'application/json', ...opts.headers },
+    credentials: 'include',
+    ...opts,
+  });
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  return { ok: res.ok, status: res.status, data };
+}
+
+async function me() {
+  const r = await api('/api/auth/me');
+  return r.ok ? r.data.user : null;
+}
+
+async function logout() {
+  await api('/api/auth/logout', { method: 'POST' });
+  location.href = 'login.html';
+}
+
+async function getProducts() {
+  const r = await api('/api/products');
+  return r.ok ? r.data : [];
+}
+
+async function getCart() {
+  const r = await api('/api/cart');
+  return r.ok ? r.data : [];
+}
+
+async function addToCart(productId, qty = 1) {
+  const r = await api('/api/cart', {
+    method: 'POST',
+    body: JSON.stringify({ productId, qty }),
+  });
+  return r;
+}
+
+async function updateCartQty(productId, qty) {
+  const r = await api('/api/cart', {
+    method: 'PUT',
+    body: JSON.stringify({ productId, qty }),
+  });
+  return r;
+}
+
+async function removeFromCart(productId) {
+  const r = await api('/api/cart', {
+    method: 'DELETE',
+    body: JSON.stringify({ productId }),
+  });
+  return r;
+}
+
+async function createOrder(order) {
+  const r = await api('/api/orders', { method: 'POST', body: JSON.stringify(order) });
+  return r;
+}
+
+async function getOrders() {
+  const r = await api('/api/orders');
+  return r.ok ? r.data : [];
+}
+
+async function simulatePayment(amount, paymentMethod) {
+  const r = await api('/api/payment', { method: 'POST', body: JSON.stringify({ amount, paymentMethod }) });
+  return r;
+}
+
+function money(n) { return '₹' + Number(n || 0).toLocaleString(); }
+
+document.addEventListener('DOMContentLoaded', async () => {
   const toggle = document.querySelector('.nav-toggle');
   const links = document.querySelector('.nav-links');
+  const cartCountEl = document.querySelector('#nav-cart-count');
 
   if (toggle && links) {
     toggle.addEventListener('click', () => {
@@ -18,60 +93,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const form = document.getElementById('order-form');
-  const msg = document.getElementById('form-msg');
-
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const data = Object.fromEntries(fd.entries());
-      console.log('Pre-order submitted:', data);
-      msg.textContent = 'Thanks! Your pre-order request has been received (demo). We will reach out soon.';
-      msg.style.color = '#10B981';
-      form.reset();
-      setTimeout(() => { msg.textContent = ''; }, 6000);
-    });
+  async function refreshCartCount() {
+    const cart = await getCart();
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+    if (cartCountEl) cartCountEl.textContent = count;
   }
+  refreshCartCount();
 
-  updateCartCount();
+  const user = await me();
+  const authLinks = document.querySelectorAll('[data-auth]');
+  const guestLinks = document.querySelectorAll('[data-guest]');
+
+  function setAuthUI(u) {
+    authLinks.forEach((el) => { el.style.display = u ? '' : 'none'; });
+    guestLinks.forEach((el) => { el.style.display = u ? 'none' : ''; });
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn && u) {
+      logoutBtn.style.display = '';
+      logoutBtn.addEventListener('click', () => logout());
+    }
+  }
+  setAuthUI(user);
 });
 
-const PRODUCT = { id: 'pawpal', name: 'PawPal Smart Toy + Feeder', price: 4999, image: '🐶' };
-
-function getCart() {
-  return JSON.parse(localStorage.getItem('pawpal_cart') || '[]');
-}
-
-function saveCart(cart) {
-  localStorage.setItem('pawpal_cart', JSON.stringify(cart));
-  updateCartCount();
-}
-
-function addToCart(product = PRODUCT, qty = 1) {
-  const cart = getCart();
-  const existing = cart.find((i) => i.id === product.id);
-  if (existing) existing.qty += qty;
-  else cart.push({ ...product, qty });
-  saveCart(cart);
-}
-
-function updateCartCount() {
-  const cart = getCart();
-  const count = cart.reduce((sum, i) => sum + i.qty, 0);
-  const els = document.querySelectorAll('#nav-cart-count');
-  els.forEach((el) => { el.textContent = count; });
-}
-
-window.addToCart = addToCart;
+window.API = API;
+window.api = api;
+window.me = me;
+window.logout = logout;
+window.getProducts = getProducts;
 window.getCart = getCart;
-window.saveCart = saveCart;
-window.updateCartCount = updateCartCount;
-window.PRODUCT = PRODUCT;
-
-function addToWishlist(product = PRODUCT) {
-  const wish = JSON.parse(localStorage.getItem('pawpal_wishlist') || '[]');
-  if (!wish.find((i) => i.id === product.id)) wish.push(product);
-  localStorage.setItem('pawpal_wishlist', JSON.stringify(wish));
-}
-window.addToWishlist = addToWishlist;
+window.addToCart = addToCart;
+window.updateCartQty = updateCartQty;
+window.removeFromCart = removeFromCart;
+window.createOrder = createOrder;
+window.getOrders = getOrders;
+window.simulatePayment = simulatePayment;
+window.money = money;

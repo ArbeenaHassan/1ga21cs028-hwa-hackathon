@@ -14,11 +14,12 @@
     <nav class="nav container">
       <div class="logo">PAWPAL</div>
       <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="cart.html" class="nav-cart">Cart <span id="nav-cart-count">0</span></a></li>
-        <li><a href="account.html">Account</a></li>
+        <li><a href="index.html">Shop</a></li>
+        <li><a href="cart.html" class="nav-cart" data-auth>Cart <span id="nav-cart-count">0</span></a></li>
+        <li><a href="account.html" data-auth>Account</a></li>
+        <li><a href="login.html" data-guest>Sign in</a></li>
       </ul>
-      <a href="order.html" class="nav-btn">Checkout</a>
+      <a href="logout" id="logout-btn" class="nav-btn" data-auth style="display:none">Sign out</a>
       <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
     </nav>
   </header>
@@ -63,7 +64,7 @@
               <input type="text" name="cvv" required placeholder="123" maxlength="3">
             </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-full">Confirm order & pay ₹4,999</button>
+          <button type="submit" class="btn btn-primary btn-full" id="pay-btn">Pay ₹4,999 & confirm order</button>
         </form>
         <p id="order-msg" class="form-msg"></p>
 
@@ -90,7 +91,7 @@
     <div class="container footer-inner">
       <div class="logo">PAWPAL</div>
       <p>Smart dog toy & feeder. Keep your dog happy, fed and hydrated while you're away.</p>
-      <div class="footer-note">Demo project — data stored locally in your browser.</div>
+      <div class="footer-note">Demo project — payment is simulated.</div>
     </div>
   </footer>
 

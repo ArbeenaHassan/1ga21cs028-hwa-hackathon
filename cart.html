@@ -14,12 +14,12 @@
     <nav class="nav container">
       <div class="logo">PAWPAL</div>
       <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="index.html#puzzles">Puzzles</a></li>
-        <li><a href="cart.html" class="nav-cart active">Cart <span id="nav-cart-count">0</span></a></li>
-        <li><a href="account.html">Account</a></li>
+        <li><a href="index.html">Shop</a></li>
+        <li><a href="cart.html" class="nav-cart active" data-auth>Cart <span id="nav-cart-count">0</span></a></li>
+        <li><a href="account.html" data-auth>Account</a></li>
+        <li><a href="login.html" data-guest>Sign in</a></li>
       </ul>
-      <a href="order.html" class="nav-btn">Checkout</a>
+      <a href="logout" id="logout-btn" class="nav-btn" data-auth style="display:none">Sign out</a>
       <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
     </nav>
   </header>
@@ -59,7 +59,7 @@
     <div class="container footer-inner">
       <div class="logo">PAWPAL</div>
       <p>Smart dog toy & feeder. Keep your dog happy, fed and hydrated while you're away.</p>
-      <div class="footer-note">Demo project — data stored locally in your browser.</div>
+      <div class="footer-note">Demo project — backend API runs on Vercel serverless functions.</div>
     </div>
   </footer>
 

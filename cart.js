@@ -1,84 +1,70 @@
-document.addEventListener('DOMContentLoaded', () => {
-  renderCart();
-  const btn = document.getElementById('checkout-btn');
-  if (btn) {
-    btn.addEventListener('click', () => {
-      const cart = getCart();
-      if (cart.length === 0) return;
-      location.href = 'order.html';
-    });
-  }
-});
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await me();
+  if (!user) { location.href = 'login.html'; return; }
 
-function renderCart() {
   const container = document.getElementById('cart-items');
   const subtotalEl = document.getElementById('cart-subtotal');
   const totalEl = document.getElementById('cart-total');
   const checkoutBtn = document.getElementById('checkout-btn');
-  const emptyMsg = container.querySelector('.empty');
-  if (!container) return;
 
-  const cart = getCart();
-  container.innerHTML = '';
-  if (cart.length === 0) {
-    container.innerHTML = '<p class="empty">Your cart is empty.</p>';
-    if (subtotalEl) subtotalEl.textContent = '₹0';
-    if (totalEl) totalEl.textContent = '₹0';
-    if (checkoutBtn) checkoutBtn.disabled = true;
-    return;
-  }
-  if (emptyMsg) emptyMsg.remove();
-
-  let subtotal = 0;
-  cart.forEach((item, i) => {
-    subtotal += item.price * item.qty;
-    const el = document.createElement('div');
-    el.className = 'cart-item';
-    el.innerHTML = `
-      <div class="cart-item-img">${item.image}</div>
-      <div class="cart-item-info">
-        <h4>${item.name}</h4>
-        <p>₹${item.price} each</p>
-        <div class="cart-qty">
-          <button type="button" onclick="changeQty(${i}, -1)">−</button>
-          <input type="number" value="${item.qty}" min="1" onchange="setQty(${i}, this.value)">
-          <button type="button" onclick="changeQty(${i}, 1)">+</button>
+  async function renderCart() {
+    const cart = await getCart();
+    container.innerHTML = '';
+    if (cart.length === 0) {
+      container.innerHTML = '<p class="empty">Your cart is empty.</p>';
+      if (subtotalEl) subtotalEl.textContent = '₹0';
+      if (totalEl) totalEl.textContent = '₹0';
+      if (checkoutBtn) checkoutBtn.disabled = true;
+      return;
+    }
+    let subtotal = 0;
+    cart.forEach((item) => {
+      subtotal += item.price * item.qty;
+      const el = document.createElement('div');
+      el.className = 'cart-item';
+      el.innerHTML = `
+        <div class="cart-item-img">${item.image}</div>
+        <div class="cart-item-info">
+          <h4>${item.name}</h4>
+          <p>₹${item.price} each</p>
+          <div class="cart-qty">
+            <button type="button" onclick="changeQty('${item.productId}', -1)">−</button>
+            <input type="number" value="${item.qty}" min="1" onchange="setQty('${item.productId}', this.value)">
+            <button type="button" onclick="changeQty('${item.productId}', 1)">+</button>
+          </div>
         </div>
-      </div>
-      <button class="cart-item-remove" onclick="removeItem(${i})">Remove</button>
-    `;
-    container.appendChild(el);
-  });
+        <button class="cart-item-remove" onclick="removeItem('${item.productId}')">Remove</button>
+      `;
+      container.appendChild(el);
+    });
+    if (subtotalEl) subtotalEl.textContent = '₹' + subtotal;
+    if (totalEl) totalEl.textContent = '₹' + subtotal;
+    if (checkoutBtn) checkoutBtn.disabled = false;
+  }
 
-  if (subtotalEl) subtotalEl.textContent = '₹' + subtotal;
-  if (totalEl) totalEl.textContent = '₹' + subtotal;
-  if (checkoutBtn) checkoutBtn.disabled = false;
-}
+  window.changeQty = async (productId, delta) => {
+    const cart = await getCart();
+    const item = cart.find((i) => i.productId === productId);
+    if (!item) return;
+    if (item.qty + delta < 1) {
+      await removeFromCart(productId);
+    } else {
+      await updateCartQty(productId, item.qty + delta);
+    }
+    renderCart();
+  };
 
-function changeQty(i, delta) {
-  const cart = getCart();
-  if (!cart[i]) return;
-  cart[i].qty += delta;
-  if (cart[i].qty < 1) cart.splice(i, 1);
-  saveCart(cart);
+  window.setQty = async (productId, val) => {
+    await updateCartQty(productId, Math.max(1, parseInt(val) || 1));
+    renderCart();
+  };
+
+  window.removeItem = async (productId) => {
+    await removeFromCart(productId);
+    renderCart();
+  };
+
   renderCart();
-}
 
-function setQty(i, val) {
-  const cart = getCart();
-  if (!cart[i]) return;
-  cart[i].qty = Math.max(1, parseInt(val) || 1);
-  saveCart(cart);
-  renderCart();
-}
-
-function removeItem(i) {
-  const cart = getCart();
-  cart.splice(i, 1);
-  saveCart(cart);
-  renderCart();
-}
-
-window.changeQty = changeQty;
-window.setQty = setQty;
-window.removeItem = removeItem;
+  checkoutBtn.addEventListener('click', () => location.href = 'order.html');
+});

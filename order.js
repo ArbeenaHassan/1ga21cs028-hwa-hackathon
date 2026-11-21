@@ -1,45 +1,58 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await me();
+  if (!user) { location.href = 'login.html'; return; }
+
   const form = document.getElementById('order-form');
   const msg = document.getElementById('order-msg');
-  const prof = JSON.parse(localStorage.getItem('pawpal_profile') || '{}');
-  if (!form) return;
+  const payBtn = document.getElementById('pay-btn');
 
-  if (prof.name) form.elements.name.value = prof.name;
-  if (prof.email) form.elements.email.value = prof.email;
-  if (prof.phone) form.elements.phone.value = prof.phone;
-  if (prof.address) form.elements.address.value = prof.address;
+  const cart = await getCart();
+  if (cart.length === 0) {
+    msg.textContent = 'Your cart is empty.';
+    msg.style.color = '#ef4444';
+    payBtn.disabled = true;
+    return;
+  }
 
-  form.addEventListener('submit', (e) => {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const cart = getCart();
-    if (cart.length === 0) {
-      msg.textContent = 'Your cart is empty.';
+    payBtn.disabled = true;
+    payBtn.textContent = 'Processing payment...';
+
+    const r = await simulatePayment(total, 'card');
+    if (!r.ok) {
+      msg.textContent = r.data.error || 'Payment failed';
       msg.style.color = '#ef4444';
+      payBtn.disabled = false;
+      payBtn.textContent = 'Pay ₹4,999 & confirm order';
       return;
     }
 
-    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const order = {
-      id: 'PP' + Date.now().toString().slice(-6),
-      date: new Date().toISOString(),
+    const orderData = {
+      items: cart.map((i) => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty })),
       total,
-      items: [...cart],
-      status: 'placed',
       customer: {
         name: form.elements.name.value,
         email: form.elements.email.value,
         phone: form.elements.phone.value,
-        address: form.elements.address.value
-      }
+        address: form.elements.address.value,
+      },
+      paymentId: r.data.paymentId,
     };
 
-    const orders = JSON.parse(localStorage.getItem('pawpal_orders') || '[]');
-    orders.push(order);
-    localStorage.setItem('pawpal_orders', JSON.stringify(orders));
-    localStorage.setItem('pawpal_last_order', order.id);
-    saveCart([]);
+    const or = await createOrder(orderData);
+    if (!or.ok) {
+      msg.textContent = or.data.error || 'Order failed';
+      msg.style.color = '#ef4444';
+      payBtn.disabled = false;
+      payBtn.textContent = 'Pay ₹4,999 & confirm order';
+      return;
+    }
+
     msg.textContent = 'Order confirmed! Redirecting to tracking...';
     msg.style.color = '#10B981';
-    setTimeout(() => { location.href = 'track.html?id=' + order.id; }, 1500);
+    setTimeout(() => { location.href = 'track.html?id=' + or.data.id; }, 1200);
   });
 });

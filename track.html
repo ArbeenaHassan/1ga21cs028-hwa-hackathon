@@ -14,11 +14,12 @@
     <nav class="nav container">
       <div class="logo">PAWPAL</div>
       <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="cart.html" class="nav-cart">Cart <span id="nav-cart-count">0</span></a></li>
-        <li><a href="account.html">Account</a></li>
+        <li><a href="index.html">Shop</a></li>
+        <li><a href="cart.html" class="nav-cart" data-auth>Cart <span id="nav-cart-count">0</span></a></li>
+        <li><a href="account.html" data-auth>Account</a></li>
+        <li><a href="login.html" data-guest>Sign in</a></li>
       </ul>
-      <a href="order.html" class="nav-btn">Checkout</a>
+      <a href="logout" id="logout-btn" class="nav-btn" data-auth style="display:none">Sign out</a>
       <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
     </nav>
   </header>
@@ -28,7 +29,7 @@
       <h2 class="section-title">Track Order</h2>
 
       <div class="track-card">
-        <div id="track-empty" class="empty">
+        <div id="track-empty" class="empty hidden">
           <p>No order to track. Place an order to see its status here.</p>
           <a href="order.html" class="btn btn-primary">Place an order</a>
         </div>
@@ -42,43 +43,7 @@
             <strong>Total:</strong> <span id="track-order-total">—</span>
           </div>
 
-          <div class="timeline">
-            <div class="tl-item completed">
-              <div class="tl-marker">1</div>
-              <div class="tl-content">
-                <h4>Order placed</h4>
-                <p id="tl-1-time">—</p>
-              </div>
-            </div>
-            <div class="tl-item completed">
-              <div class="tl-marker">2</div>
-              <div class="tl-content">
-                <h4>Processing</h4>
-                <p id="tl-2-time">—</p>
-              </div>
-            </div>
-            <div class="tl-item">
-              <div class="tl-marker">3</div>
-              <div class="tl-content">
-                <h4>Shipped</h4>
-                <p id="tl-3-time">—</p>
-              </div>
-            </div>
-            <div class="tl-item">
-              <div class="tl-marker">4</div>
-              <div class="tl-content">
-                <h4>Out for delivery</h4>
-                <p id="tl-4-time">—</p>
-              </div>
-            </div>
-            <div class="tl-item">
-              <div class="tl-marker">5</div>
-              <div class="tl-content">
-                <h4>Delivered</h4>
-                <p id="tl-5-time">—</p>
-              </div>
-            </div>
-          </div>
+          <div class="timeline" id="timeline"></div>
 
           <div class="track-actions">
             <a href="account.html" class="btn btn-outline">Back to account</a>
@@ -92,7 +57,7 @@
     <div class="container footer-inner">
       <div class="logo">PAWPAL</div>
       <p>Smart dog toy & feeder. Keep your dog happy, fed and hydrated while you're away.</p>
-      <div class="footer-note">Demo project — data stored locally in your browser.</div>
+      <div class="footer-note">Demo project — backend API runs on Vercel serverless functions.</div>
     </div>
   </footer>
 
